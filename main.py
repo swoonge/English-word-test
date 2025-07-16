@@ -271,9 +271,10 @@ class WordTestWindow:
         def _on_mousewheel(event):
             canvas.yview_scroll(int(-1*(event.delta/120)), "units")
         
-        canvas.bind_all("<MouseWheel>", _on_mousewheel)
-        canvas.bind_all("<Button-4>", lambda e: canvas.yview_scroll(-1, "units"))
-        canvas.bind_all("<Button-5>", lambda e: canvas.yview_scroll(1, "units"))
+        canvas.bind("<MouseWheel>", _on_mousewheel)
+        canvas.bind("<Button-4>", lambda e: canvas.yview_scroll(-1, "units"))
+        canvas.bind("<Button-5>", lambda e: canvas.yview_scroll(1, "units"))
+        canvas.focus_set()  # 포커스를 받을 수 있도록 설정
         
         canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
         canvas.configure(yscrollcommand=scrollbar.set)
@@ -287,7 +288,7 @@ class WordTestWindow:
             
             # 답안 입력 필드
             entry = tk.Entry(scrollable_frame, font=("Arial", 12), width=30,
-                           relief="solid", borderwidth=1)
+                           relief="solid", borderwidth=1, bg="#ffffff", fg="#333333")
             entry.grid(row=i, column=1, padx=10, pady=5, sticky="w")
             entry.bind('<Return>', self._on_enter)
             self.entries.append(entry)
@@ -331,6 +332,13 @@ class WordTestWindow:
     def _on_close(self):
         """창 닫기 이벤트 처리"""
         self.submitted = False
+        try:
+            # 이벤트 바인딩 해제
+            self.root.unbind_all("<MouseWheel>")
+            self.root.unbind_all("<Button-4>")
+            self.root.unbind_all("<Button-5>")
+        except:
+            pass  # 이미 해제되었거나 오류가 발생해도 무시
         self.root.quit()
         self.root.destroy()
     
@@ -408,6 +416,12 @@ class ResultWindow:
                             relief="flat", padx=20, pady=8, cursor="hand2")
         save_btn.pack(side="left", padx=10)
         
+        # 복사 버튼
+        copy_btn = tk.Button(btn_frame, text="📋 결과 복사", command=self.copy_result,
+                            font=("Arial", 12), bg="#17a2b8", fg="white",
+                            relief="flat", padx=20, pady=8, cursor="hand2")
+        copy_btn.pack(side="left", padx=10)
+        
         # 닫기 버튼
         close_btn = tk.Button(btn_frame, text="❌ 닫기", command=self.root.destroy,
                              font=("Arial", 12), bg="#dc3545", fg="white",
@@ -448,7 +462,10 @@ class ResultWindow:
         
         def _on_mousewheel(event):
             canvas.yview_scroll(int(-1*(event.delta/120)), "units")
-        canvas.bind_all("<MouseWheel>", _on_mousewheel)
+        canvas.bind("<MouseWheel>", _on_mousewheel)
+        canvas.bind("<Button-4>", lambda e: canvas.yview_scroll(-1, "units"))
+        canvas.bind("<Button-5>", lambda e: canvas.yview_scroll(1, "units"))
+        canvas.focus_set()  # 포커스를 받을 수 있도록 설정
         
         canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
         canvas.configure(yscrollcommand=scrollbar.set)
@@ -571,6 +588,30 @@ class ResultWindow:
         except Exception as e:
             messagebox.showerror("저장 실패", f"결과 저장 중 오류가 발생했습니다: {e}")
             logger.error(f"결과 저장 실패: {e}")
+    
+    def copy_result(self):
+        """결과를 클립보드에 복사합니다."""
+        try:
+            # 헤더 생성
+            now = datetime.datetime.now()
+            header = f"# 영어 단어 시험 결과\n\n"
+            header += f"시험 일시: {now.strftime('%Y-%m-%d %H:%M:%S')}\n"
+            header += f"총 문제 수: {len(self.test_result.words)}문제\n\n"
+            
+            # 전체 결과 텍스트
+            full_result = header + self.test_result.gpt_result
+            
+            # 클립보드에 복사
+            self.root.clipboard_clear()
+            self.root.clipboard_append(full_result)
+            self.root.update()  # 클립보드 업데이트 보장
+            
+            messagebox.showinfo("복사 완료", "결과가 클립보드에 복사되었습니다!")
+            logger.info("결과가 클립보드에 복사되었습니다.")
+            
+        except Exception as e:
+            messagebox.showerror("복사 실패", f"결과 복사 중 오류가 발생했습니다: {e}")
+            logger.error(f"결과 복사 실패: {e}")
     
     def run(self):
         """결과 창을 실행합니다."""
