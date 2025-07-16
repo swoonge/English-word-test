@@ -390,6 +390,9 @@ class ResultWindow:
         self.root.lift()
         self.root.focus_force()
         
+        # 창 닫기 이벤트 처리
+        self.root.protocol("WM_DELETE_WINDOW", self._on_close)
+        
         self.setup_ui()
     
     def setup_ui(self):
@@ -423,7 +426,7 @@ class ResultWindow:
         copy_btn.pack(side="left", padx=10)
         
         # 닫기 버튼
-        close_btn = tk.Button(btn_frame, text="❌ 닫기", command=self.root.destroy,
+        close_btn = tk.Button(btn_frame, text="❌ 닫기", command=self._on_close,
                              font=("Arial", 12), bg="#dc3545", fg="white",
                              relief="flat", padx=20, pady=8, cursor="hand2")
         close_btn.pack(side="left", padx=10)
@@ -613,9 +616,27 @@ class ResultWindow:
             messagebox.showerror("복사 실패", f"결과 복사 중 오류가 발생했습니다: {e}")
             logger.error(f"결과 복사 실패: {e}")
     
+    def _on_close(self):
+        """창 닫기 이벤트 처리"""
+        try:
+            # 이벤트 바인딩 해제
+            self.root.unbind_all("<MouseWheel>")
+            self.root.unbind_all("<Button-4>")
+            self.root.unbind_all("<Button-5>")
+        except:
+            pass  # 이미 해제되었거나 오류가 발생해도 무시
+        
+        # 창 닫기
+        self.root.quit()
+        self.root.destroy()
+    
     def run(self):
         """결과 창을 실행합니다."""
-        self.root.mainloop()
+        try:
+            self.root.mainloop()
+        except Exception as e:
+            logger.error(f"결과 창 실행 중 오류: {e}")
+            self._on_close()
 
 class MainApplication:
     """메인 애플리케이션 클래스"""
