@@ -37,6 +37,17 @@ class ThemeManager:
     
     def __init__(self, theme_name: str = "dark"):
         self.current_theme = self.THEMES.get(theme_name, self.THEMES["dark"])
+        self.theme_name = theme_name
+    
+    def set_theme(self, theme_name: str):
+        """테마를 변경합니다."""
+        if theme_name in self.THEMES:
+            self.theme_name = theme_name
+            self.current_theme = self.THEMES[theme_name]
+    
+    def get_theme_name(self) -> str:
+        """현재 테마 이름을 반환합니다."""
+        return self.theme_name
     
     def get_color(self, key: str) -> str:
         """테마 색상을 가져옵니다."""

@@ -52,12 +52,62 @@ class MainApplication(BaseWindow):
         self.font_family = self.config.get("ui.font_family", "Arial")
         self.font_size = self.config.get("ui.font_size", 12)
         
+        # 메인 창 포커스 관리 설정
+        self.setup_main_window_focus()
+        
         self.openai_service = OpenAIService(self.config)
         self.setup_ui()
         
         # 드래그 앤 드롭 설정 (가능한 경우만)
         if self.dnd_available:
             self._setup_drag_drop()
+            
+    def setup_main_window_focus(self):
+        """메인 창 포커스 관리를 설정합니다."""
+        # 창 활성화 이벤트 바인딩
+        self.root.bind("<FocusIn>", self.on_main_focus)
+        self.root.bind("<Button-1>", self.on_main_click)
+        self.root.bind("<Map>", self.on_main_map)
+        self.root.bind("<Visibility>", self.on_main_visibility)
+        
+        # 초기 포커스 설정
+        self.root.lift()
+        self.root.focus_force()
+        
+    def on_main_focus(self, event=None):
+        """메인 창이 포커스를 받을 때 호출됩니다."""
+        try:
+            if event and event.widget == self.root:
+                self.root.focus_force()
+                logger.debug("메인 창이 포커스를 받았습니다.")
+        except Exception as e:
+            logger.debug(f"메인 창 포커스 설정 중 오류: {e}")
+    
+    def on_main_click(self, event=None):
+        """메인 창을 클릭할 때 호출됩니다."""
+        try:
+            self.root.focus_force()
+            logger.debug("메인 창이 클릭되었습니다.")
+        except Exception as e:
+            logger.debug(f"메인 창 클릭 포커스 설정 중 오류: {e}")
+    
+    def on_main_map(self, event=None):
+        """메인 창이 표시될 때 호출됩니다."""
+        try:
+            if event and event.widget == self.root:
+                self.root.after(50, lambda: self.root.focus_force())
+                logger.debug("메인 창이 표시되었습니다.")
+        except Exception as e:
+            logger.debug(f"메인 창 맵 포커스 설정 중 오류: {e}")
+    
+    def on_main_visibility(self, event=None):
+        """메인 창의 가시성이 변경될 때 호출됩니다."""
+        try:
+            if event and event.widget == self.root and event.state == 'VisibilityUnobscured':
+                self.root.after(50, lambda: self.root.focus_force())
+                logger.debug("메인 창이 완전히 보여집니다.")
+        except Exception as e:
+            logger.debug(f"메인 창 가시성 포커스 설정 중 오류: {e}")
     
     def setup_ui(self):
         """메인 UI를 구성합니다."""
@@ -309,19 +359,37 @@ class MainApplication(BaseWindow):
     
     def _refresh_theme(self):
         """테마를 새로고침합니다."""
-        # 설정 다시 로드
-        self.config = Config()
-        
-        # 테마 매니저 업데이트
-        from ..utils.theme_manager import ThemeManager
-        self.theme = ThemeManager(self.config.get("ui.theme", "dark"))
-        
-        # 메인 창 배경색 변경
-        self.root.configure(bg=self.theme.get_color("bg"))
-        
-        # 모든 위젯 다시 그리기 (간단한 방법: 창 새로고침)
-        self.show_info("테마 변경", "테마가 변경되었습니다.\n다음 실행 시 완전히 적용됩니다.")
-        logger.info("테마 새로고침 완료")
+        try:
+            logger.info("테마 새로고침 시작")
+            
+            # 설정 다시 로드
+            old_theme = self.config.get("ui.theme", "dark")
+            self.config = Config()
+            new_theme = self.config.get("ui.theme", "dark")
+            
+            logger.info(f"테마 변경: {old_theme} → {new_theme}")
+            
+            # 테마 매니저 업데이트
+            from ..utils.theme_manager import ThemeManager
+            self.theme = ThemeManager(new_theme)
+            
+            # 메인 창 배경색 변경
+            self.root.configure(bg=self.theme.get_color("bg"))
+            
+            # OpenAI 서비스도 새로운 config로 업데이트
+            self.openai_service = OpenAIService(self.config)
+            
+            # 사용자에게 피드백
+            if old_theme != new_theme:
+                self.show_info("테마 변경", f"테마가 '{new_theme}'로 변경되었습니다.\n새로운 창에서 완전히 적용됩니다.")
+            else:
+                self.show_info("설정 적용", "설정이 성공적으로 적용되었습니다.")
+                
+            logger.info("테마 새로고침 완료")
+            
+        except Exception as e:
+            logger.error(f"테마 새로고침 중 오류: {e}")
+            self.show_warning("설정 적용", "일부 설정 적용 중 오류가 발생했습니다.\n프로그램을 다시 시작하면 모든 설정이 적용됩니다.")
     
     def _update_recent_files_menu(self):
         """최근 파일 메뉴를 업데이트합니다."""

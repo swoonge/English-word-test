@@ -1,6 +1,6 @@
 {
   "ui": {
-    "theme": "light",
+    "theme": "dark",
     "font_family": "Arial",
     "font_size": 12,
     "window_geometry": {

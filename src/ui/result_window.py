@@ -12,13 +12,22 @@ from .base_window import BaseWindow
 from ..core.config import Config
 from ..core.models import TestResult
 
+import logging
+logger = logging.getLogger(__name__)
+
 # pyperclip 클립보드 지원 (선택적)
 try:
     import pyperclip
+    # 우분투에서 클립보드 테스트
+    try:
+        pyperclip.copy("test")
+        pyperclip.paste()
+    except Exception as e:
+        logger.warning(f"클립보드 기능 테스트 실패: {e}")
+        logger.info("우분투에서는 'sudo apt install xclip' 명령으로 클립보드 지원을 설치할 수 있습니다.")
+        pyperclip = None
 except ImportError:
     pyperclip = None
-
-logger = logging.getLogger(__name__)
 
 
 class ResultWindow(BaseWindow):
