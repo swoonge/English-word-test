@@ -21,12 +21,17 @@ try:
 except ImportError:
     pass
 
+# 스크립트 디렉토리 설정 (어디서 실행하든 정상 작동하도록)
+SCRIPT_DIR = Path(__file__).parent.absolute()
+os.chdir(SCRIPT_DIR)
+
 # 로깅 설정
+log_file = SCRIPT_DIR / 'word_test.log'
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('word_test.log'),
+        logging.FileHandler(log_file),
         logging.StreamHandler()
     ]
 )
