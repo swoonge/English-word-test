@@ -48,14 +48,51 @@ mkdir words results
 echo "OPENAI_API_KEY=your-api-key-here" > .env
 ```
 
-## 🚀 사용 방법
+## � 프로젝트 구조
 
-### 1. 프로그램 실행
-```bash
-python daily_word_test.py
+```
+English_study/
+├── main.py                 # 🚀 메인 진입점 (권장)
+├── run.py                  # 🔄 호환성 실행 스크립트
+├── daily_word_test.py      # 📜 레거시 단일 파일 (참고용)
+├── src/                    # 📦 모듈화된 소스 코드
+│   ├── core/              # 🧠 핵심 비즈니스 로직
+│   │   ├── models.py      # 📊 데이터 모델 (WordPair, TestResult)
+│   │   └── config.py      # ⚙️ 설정 관리
+│   ├── services/          # 🔧 외부 서비스 연동
+│   │   └── openai_service.py # 🤖 OpenAI API 서비스
+│   ├── utils/             # 🛠️ 유틸리티 함수들
+│   │   ├── markdown_parser.py # 📝 마크다운 파싱
+│   │   └── theme_manager.py   # 🎨 테마 관리
+│   └── ui/                # 🖼️ 사용자 인터페이스
+│       ├── base_window.py     # 🏗️ 기본 UI 클래스
+│       ├── main_window.py     # 🏠 메인 창
+│       ├── test_window.py     # 📝 시험 창
+│       ├── result_window.py   # 📊 결과 창
+│       └── settings_window.py # ⚙️ 설정 창
+├── words/                  # 📚 단어 파일들
+├── results/               # 📈 시험 결과들
+├── logs/                  # 📋 로그 파일들
+├── .env                   # 🔑 환경 변수 (git 제외)
+├── config.json           # ⚙️ 설정 파일 (git 제외)
+├── .env.example          # 📋 환경 변수 템플릿
+├── config.json.example   # 📋 설정 파일 템플릿
+└── requirements.txt      # 📦 의존성 패키지 목록
 ```
 
-### 2. 설정
+## �🚀 사용 방법
+
+### 1. 프로그램 실행 (권장)
+```bash
+python main.py
+```
+
+### 2. 호환성 실행
+```bash
+python run.py
+```
+
+### 3. 설정
 - 메뉴 → 설정 → 환경 설정에서 API 키 및 테마 설정
 - 또는 프로그램 내 설정 버튼 클릭
 
