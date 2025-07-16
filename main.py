@@ -621,7 +621,7 @@ class MainApplication:
         info_label.pack(pady=20)
         
         # 드래그 영역 표시
-        drop_frame = tk.Frame(main_frame, bg="#f8f9fa", relief="dashed", borderwidth=2)
+        drop_frame = tk.Frame(main_frame, bg="#f8f9fa", relief="ridge", borderwidth=2)
         drop_frame.pack(fill="both", expand=True, pady=20)
         
         drop_label = tk.Label(drop_frame, text="📁\n드래그 앤 드롭 영역", 
