@@ -28,6 +28,9 @@ MANIFEST
 .venv
 env/
 venv/
+
+# Legacy files (백업용)
+legacy/
 ENV/
 env.bak/
 venv.bak/
