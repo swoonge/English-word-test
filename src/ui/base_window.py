@@ -124,16 +124,17 @@ class BaseWindow:
         return tk.Label(parent, text=text, **default_style)
     
     def create_entry(self, parent, **kwargs) -> tk.Entry:
-        """통일된 스타일의 입력 필드를 생성합니다."""
+        """기본 Entry 위젯을 생성합니다 (정석 방식)."""
+        # 기본 스타일만 적용 - 복잡한 테마 제거
         default_style = {
-            "bg": self.theme.get_color("entry_bg"),
-            "fg": self.theme.get_color("entry_fg"),
             "font": (self.font_family, self.font_size),
-            "relief": "flat",
-            "insertbackground": self.theme.get_color("fg")
+            "width": 30,
         }
         default_style.update(kwargs)
-        return tk.Entry(parent, **default_style)
+        
+        # 기본 tkinter Entry 생성 (테마 색상 없이)
+        entry = tk.Entry(parent, **default_style)
+        return entry
     
     def show_error(self, title: str, message: str):
         """에러 메시지를 표시합니다."""

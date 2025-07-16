@@ -14,8 +14,8 @@ class ThemeManager:
             "btn_fg": "#f5f6fa",
             "btn_active_bg": "#5d646f",  # 버튼 활성화 시 배경색
             "btn_active_fg": "#ffffff",   # 버튼 활성화 시 글자색
-            "entry_bg": "#2d333b",
-            "entry_fg": "#f5f6fa",
+            "entry_bg": "#ffffff",        # 입력 필드 배경 (흰색으로 명확하게)
+            "entry_fg": "#000000",        # 입력 필드 글자 (검은색으로 명확하게)
             "highlight": "#2986cc",
             "success": "#4caf50",
             "error": "#f44336"
@@ -27,8 +27,8 @@ class ThemeManager:
             "btn_fg": "#333333",
             "btn_active_bg": "#d0d0d0",  # 버튼 활성화 시 배경색
             "btn_active_fg": "#000000",   # 버튼 활성화 시 글자색
-            "entry_bg": "#ffffff",
-            "entry_fg": "#333333",
+            "entry_bg": "#ffffff",        # 입력 필드 배경
+            "entry_fg": "#000000",        # 입력 필드 글자 (검은색으로 명확하게)
             "highlight": "#2986cc",
             "success": "#4caf50",
             "error": "#f44336"
